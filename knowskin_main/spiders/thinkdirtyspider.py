@@ -19,7 +19,6 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
         self.failed_requests = []  # List to store failed requests
 
     def start_requests(self):
-        # Fetch the first 10 products
         products = self.source_collection.find({}, {"_id": 0, "id": 1, "name": 1}).limit(10000)
         proxies = {
             "http": "http://scrapeops:64cc759c-ab65-4161-acdf-92e9632075bb@residential-proxy.scrapeops.io:8181",
