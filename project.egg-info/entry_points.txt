@@ -1,0 +1,2 @@
+[scrapy]
+settings = knowskin_main.settings

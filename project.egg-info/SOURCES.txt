@@ -1,0 +1,13 @@
+setup.py
+knowskin_main/__init__.py
+knowskin_main/items.py
+knowskin_main/middlewares.py
+knowskin_main/pipelines.py
+knowskin_main/settings.py
+knowskin_main/spiders/__init__.py
+knowskin_main/spiders/thinkdirtyspider.py
+project.egg-info/PKG-INFO
+project.egg-info/SOURCES.txt
+project.egg-info/dependency_links.txt
+project.egg-info/entry_points.txt
+project.egg-info/top_level.txt
