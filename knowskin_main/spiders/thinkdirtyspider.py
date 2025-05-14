@@ -19,7 +19,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
         products = self.source_collection.find(
             {"$or": [{"status": {"$exists": False}}, {"status": "pending"}, {"status": "failed"}]},
             {"_id": 0, "id": 1, "name": 1}
-        ).limit(1)
+        ).limit(1000)
         proxy = "http://scrapeops:64cc759c-ab65-4161-acdf-92e9632075bb@residential-proxy.scrapeops.io:8181"
         for product in products:
             product_id = product["id"]
