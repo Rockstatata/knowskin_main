@@ -12,6 +12,17 @@ BOT_NAME = "knowskin_main"
 SPIDER_MODULES = ["knowskin_main.spiders"]
 NEWSPIDER_MODULE = "knowskin_main.spiders"
 
+SCRAPEOPS_API_KEY = '64cc759c-ab65-4161-acdf-92e9632075bb'
+
+EXTENSIONS = {
+        'scrapeops_scrapy.extension.ScrapeOpsMonitor': 500, 
+        }
+
+DOWNLOADER_MIDDLEWARES = {
+        'scrapeops_scrapy.middleware.retry.RetryMiddleware': 550,
+        'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
+        }
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "knowskin_main (+http://www.yourdomain.com)"
