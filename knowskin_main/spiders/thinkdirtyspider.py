@@ -9,17 +9,21 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        # Source collection remains on Atlas
         self.client = pymongo.MongoClient("mongodb+srv://algoadmin:0IHi82N9Hoi84yQp@knowskin-cluster.ogv7tvs.mongodb.net/?retryWrites=true&w=majority&appName=knowskin-cluster")
         self.db = self.client["knowskin"]
         self.source_collection = self.db["products"]
-        self.ingredient_collection = self.db["product_ingredients"]
+        # Ingredient collection now on localhost
+        self.local_client = pymongo.MongoClient("mongodb://localhost:27017/")
+        self.local_db = self.local_client["Knowskin_demo"]
+        self.ingredient_collection = self.local_db["ingredients"]
 
     def start_requests(self):
         # Only fetch products that are not fetched or failed previously
         products = self.source_collection.find(
             {"$or": [{"status": {"$exists": False}}, {"status": "pending"}, {"status": "failed"}]},
             {"_id": 0, "id": 1, "name": 1}
-        ).limit(1000)  # Limit to 10 products for testing
+        )
         proxy = "http://ernusbhx-rotate:xkj6r6ecaqlz@p.webshare.io:80/"
         for product in products:
             product_id = product["id"]
@@ -56,7 +60,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
                 "product_name": product_name,
                 "ingredients": ingredients
             }
-            # Insert or update ingredient data
+            # Insert or update ingredient data in local MongoDB
             self.ingredient_collection.update_one(
                 {"product_id": product_id},
                 {"$set": doc},
