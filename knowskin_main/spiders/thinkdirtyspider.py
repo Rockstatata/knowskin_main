@@ -34,7 +34,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
         super().__init__(*args, **kwargs)
         self.client = pymongo.MongoClient(
             "mongodb+srv://algoadmin:0IHi82N9Hoi84yQp@knowskin-cluster.ogv7tvs.mongodb.net/?retryWrites=true&w=majority&appName=knowskin-cluster"
-        ).limit(10) 
+        ).limit(1000) 
         self.db = self.client["knowskin"]
         self.source_collection = self.db["products"]
 
