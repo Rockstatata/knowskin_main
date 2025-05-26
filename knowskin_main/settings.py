@@ -33,6 +33,8 @@ CONCURRENT_REQUESTS_PER_DOMAIN = 1
 
 
 
+
+
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "knowskin_main (+http://www.yourdomain.com)"
 

@@ -34,7 +34,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
         super().__init__(*args, **kwargs)
         self.client = pymongo.MongoClient(
             "mongodb+srv://algoadmin:0IHi82N9Hoi84yQp@knowskin-cluster.ogv7tvs.mongodb.net/?retryWrites=true&w=majority&appName=knowskin-cluster"
-        ).limit(1000) 
+        )
         self.db = self.client["knowskin"]
         self.source_collection = self.db["products"]
 
@@ -49,7 +49,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
         products = self.source_collection.find(
             {"$or": [{"status": {"$exists": False}}, {"status": "pending"}, {"status": "failed"}]},
             {"_id": 0, "id": 1, "name": 1}
-        ).skip(self.skip).limit(self.batch_size)
+        ).limit(self.batch_size)
 
         proxy = "http://ernusbhx-rotate:xkj6r6ecaqlz@p.webshare.io:80/"
 
@@ -65,7 +65,10 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
                 "x_device_uuid": random.choice(self.X_DEVICE_UUIDS),
                 "x_device_platform": "android",
                 "x_auth_token": random.choice(self.X_AUTH_TOKENS),
-                "x_device_app_version": "422"
+                "x_device_app_version": "422",
+                "Connection": "Keep-Alive",
+                "Accept": "*/*",
+                "Content-Type": "application/json; charset=utf-8",
             }
 
             self.source_collection.update_one({"id": product_id}, {"$set": {"status": "pending"}})
@@ -107,7 +110,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
                 upsert=True
             )
             self.source_collection.update_one({"id": product_id}, {"$set": {"status": "success"}})
-            self.logger.info(f"✅ {product_id}: {len(ingredients)} ingredients saved.")
+            self.logger.info(f"✅ {product_id}: {len(ingredients)} ingredients saved. Response status = {response.status}")
         except Exception as e:
             self.logger.error(f"❌ Error parsing product {product_id}: {e}")
             self.source_collection.update_one({"id": product_id}, {"$set": {"status": "failed"}})
