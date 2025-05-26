@@ -23,6 +23,15 @@ DOWNLOADER_MIDDLEWARES = {
         'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
         }
 
+AUTOTHROTTLE_ENABLED = True
+AUTOTHROTTLE_START_DELAY = 3
+AUTOTHROTTLE_MAX_DELAY = 10
+AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
+
+CONCURRENT_REQUESTS = 2  # Global
+CONCURRENT_REQUESTS_PER_DOMAIN = 1
+
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "knowskin_main (+http://www.yourdomain.com)"
