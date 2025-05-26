@@ -7,27 +7,20 @@ import logging
 class ThinkdirtyspiderSpider(scrapy.Spider):
     name = "thinkdirtyspider"
     allowed_domains = ["app.thinkdirtyapp.com"]
-    custom_settings = {
-        'CONCURRENT_REQUESTS': 8,
-        'DOWNLOAD_DELAY': 1.0,
-        'RETRY_TIMES': 3,
-        'JOBDIR': 'crawls/thinkdirty',  # Enables resume support
-        'LOG_LEVEL': 'INFO',
-    }
 
     # Rotating headers
     USER_AGENTS = [
         "okhttp/5.0.0-alpha.2",
-        "okhttp/4.9.3",
+        #"okhttp/4.9.3",
     ]
     X_DEVICE_UUIDS = [
         "dBEFxpVWQgykqOwx3PhEiz",
-        "a1b2c3d4e5f6g7h8i9j0k",
-        "ZxCvBnMqWeRtYuIoPlKjH"
+        # "a1b2c3d4e5f6g7h8i9j0k",
+        # "ZxCvBnMqWeRtYuIoPlKjH"
     ]
     X_AUTH_TOKENS = [
         "mzHe5b16qKxRX_xoLEAi",
-         "jH9vgJXtyMzfK5QVLx5N"
+         #"jH9vgJXtyMzfK5QVLx5N"
     ]
 
     def __init__(self, *args, **kwargs):
