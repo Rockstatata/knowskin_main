@@ -13,15 +13,16 @@ SPIDER_MODULES = ["knowskin_main.spiders"]
 NEWSPIDER_MODULE = "knowskin_main.spiders"
 
 SCRAPEOPS_API_KEY = '64cc759c-ab65-4161-acdf-92e9632075bb'
+SCRAPERAPI_API_KEY = '0d7326ad99726d3a7c6cd1a0c0c2c22b'
 
-EXTENSIONS = {
-        'scrapeops_scrapy.extension.ScrapeOpsMonitor': 500, 
-        }
+# EXTENSIONS = {
+#         'scrapeops_scrapy.extension.ScrapeOpsMonitor': 500, 
+#         }
 
-DOWNLOADER_MIDDLEWARES = {
-        'scrapeops_scrapy.middleware.retry.RetryMiddleware': 550,
-        'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
-        }
+# DOWNLOADER_MIDDLEWARES = {
+#         'scrapeops_scrapy.middleware.retry.RetryMiddleware': 550,
+#         'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
+#         }
 
 AUTOTHROTTLE_ENABLED = True
 AUTOTHROTTLE_START_DELAY = 3

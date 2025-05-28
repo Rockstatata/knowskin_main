@@ -6,7 +6,7 @@ import logging
 
 class ThinkdirtyspiderSpider(scrapy.Spider):
     name = "thinkdirtyspider"
-    allowed_domains = ["app.thinkdirtyapp.com"]
+    allowed_domains = []
 
     # Rotating headers
     USER_AGENTS = [
@@ -20,7 +20,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
     ]
     X_AUTH_TOKENS = [
         "mzHe5b16qKxRX_xoLEAi",
-         #"jH9vgJXtyMzfK5QVLx5N"
+         "jH9vgJXtyMzfK5QVLx5N"
     ]
 
     def __init__(self, *args, **kwargs):
@@ -35,22 +35,23 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
         self.local_db = self.local_client["Knowskin_demo"]
         self.ingredient_collection = self.local_db["ingredients"]
 
-        self.batch_size = 1000  # Adjust per needs
+        self.batch_size = 10  # Adjust per needs
         self.skip = int(kwargs.get("skip", 0))
 
     def start_requests(self):
         products = self.source_collection.find(
             {"$or": [{"status": {"$exists": False}}, {"status": "pending"}, {"status": "failed"}]},
             {"_id": 0, "id": 1, "name": 1}
-        ).limit(self.batch_size)
+        ).skip(self.skip).limit(self.batch_size)
 
-        proxy = "http://ernusbhx-rotate:xkj6r6ecaqlz@p.webshare.io:80/"
+        proxy = "http://xrwllnok-rotate:37wknqhx1vdz@p.webshare.io:80/"
 
         count = 0
         for product in products:
             product_id = product["id"]
             product_name = product.get("name", "Unknown Product")
-            url = f"https://app.thinkdirtyapp.com/api/v2/products/{product_id}"
+            url = f"https://app.thinkdirtyapp.com/api/v1/products/{product_id}"
+            
 
             headers = {
                 "User-Agent": random.choice(self.USER_AGENTS),
@@ -60,8 +61,6 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
                 "x_auth_token": random.choice(self.X_AUTH_TOKENS),
                 "x_device_app_version": "422",
                 "Connection": "Keep-Alive",
-                "Accept": "*/*",
-                "Content-Type": "application/json; charset=utf-8",
             }
 
             self.source_collection.update_one({"id": product_id}, {"$set": {"status": "pending"}})
@@ -79,6 +78,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
                 }
             )
             count += 1
+            self.logger.info(f"Processing product {count}: {product_id} - {product_name}")
 
         if count == 0:
             self.logger.info("No products found for processing.")
@@ -89,12 +89,21 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
         try:
             data = json.loads(response.text)
             product = data.get("product", {})
-            ingredients = product.get("ingredients", [])
+            upcs = product.get("upcs", [])
+            # Collect all upc_ingredients from all UPCs
+            all_upc_ingredients = []
+            for upc in upcs:
+                upc_ingredients = upc.get("upc_ingredients", [])
+                all_upc_ingredients.extend(upc_ingredients)
+
+            self.logger.info(f"Parsing response for product_id={product_id}, status={response.status}")
+            self.logger.debug(f"Response body: {response.text[:500]}")
+            
 
             doc = {
                 "product_id": product_id,
                 "product_name": product_name,
-                "ingredients": ingredients
+                "ingredients": all_upc_ingredients
             }
 
             self.ingredient_collection.update_one(
@@ -103,7 +112,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
                 upsert=True
             )
             self.source_collection.update_one({"id": product_id}, {"$set": {"status": "success"}})
-            self.logger.info(f"✅ {product_id}: {len(ingredients)} ingredients saved. Response status = {response.status}")
+            self.logger.info(f"✅ {product_id}: {len(all_upc_ingredients)} upc_ingredients saved. Response status = {response.status}")
         except Exception as e:
             self.logger.error(f"❌ Error parsing product {product_id}: {e}")
             self.source_collection.update_one({"id": product_id}, {"$set": {"status": "failed"}})
