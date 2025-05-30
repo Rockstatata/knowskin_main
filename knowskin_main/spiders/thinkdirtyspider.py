@@ -20,7 +20,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
     ]
     X_AUTH_TOKENS = [
         "mzHe5b16qKxRX_xoLEAi",
-         "jH9vgJXtyMzfK5QVLx5N"
+        "jH9vgJXtyMzfK5QVLx5N"
     ]
 
     def __init__(self, *args, **kwargs):
