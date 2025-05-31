@@ -11,12 +11,12 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
     # Rotating headers
     USER_AGENTS = [
         "okhttp/5.0.0-alpha.2",
-        #"okhttp/4.9.3",
+        "okhttp/4.9.3",
     ]
     X_DEVICE_UUIDS = [
         "dBEFxpVWQgykqOwx3PhEiz",
-        # "a1b2c3d4e5f6g7h8i9j0k",
-        # "ZxCvBnMqWeRtYuIoPlKjH"
+         "a1b2c3d4e5f6g7h8i9j0k",
+         "ZxCvBnMqWeRtYuIoPlKjH"
     ]
     X_AUTH_TOKENS = [
         "mzHe5b16qKxRX_xoLEAi",
@@ -44,7 +44,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
             {"_id": 0, "id": 1, "name": 1}
         ).skip(self.skip).limit(self.batch_size)
 
-        proxy = "http://xrwllnok-rotate:37wknqhx1vdz@p.webshare.io:80/"
+        proxy = "http://tnxpbndi-rotate:0sc4oasvwyqs@p.webshare.io:80/"
 
         count = 0
         for product in products:
