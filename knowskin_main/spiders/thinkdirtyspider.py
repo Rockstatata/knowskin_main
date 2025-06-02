@@ -6,7 +6,7 @@ import logging
 
 class ThinkdirtyspiderSpider(scrapy.Spider):
     name = "thinkdirtyspider"
-    allowed_domains = []
+    allowed_domains = ["app.thinkdirtyapp.com"]
 
     # Rotating headers
     USER_AGENTS = [
@@ -44,7 +44,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
             {"_id": 0, "id": 1, "name": 1}
         ).skip(self.skip).limit(self.batch_size)
 
-        #proxy = "http://tnxpbndi-rotate:0sc4oasvwyqs@p.webshare.io:80/"
+        proxy = "http://ernusbhx-rotate:xkj6r6ecaqlz@p.webshare.io:80/"
 
         count = 0
         for product in products:
@@ -73,7 +73,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
                 meta={
                     'product_id': product_id,
                     'product_name': product_name,
-                    #'proxy': proxy,
+                    'proxy': proxy,
                     'download_timeout': 10
                 }
             )
