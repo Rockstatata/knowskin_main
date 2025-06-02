@@ -1,8 +1,11 @@
+import time
 import scrapy
 import pymongo
 import json
 import random
 import logging
+import random
+import time
 
 class ThinkdirtyspiderSpider(scrapy.Spider):
     name = "thinkdirtyspider"
@@ -44,14 +47,19 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
             {"_id": 0, "id": 1, "name": 1}
         ).skip(self.skip).limit(self.batch_size)
 
-        proxy = "http://ernusbhx-rotate:xkj6r6ecaqlz@p.webshare.io:80/"
+        proxy = "http://ernusbhx-rotate:xkj6r6ecaqlz@p.webshare.io:80"
 
         count = 0
         for product in products:
-            product_id = product["id"]
+            product_id = int(product["id"])
             product_name = product.get("name", "Unknown Product")
-            url = f"https://app.thinkdirtyapp.com/api/v1/products/{product_id}"
-            
+            # Randomly choose v1 or v2 endpoint
+            if random.choice([True, False]):
+                url = f"https://app.thinkdirtyapp.com/api/v1/products/{product_id}"
+                callback = self.parse_v1
+            else:
+                url = f"https://app.thinkdirtyapp.com/api/v2/products/{product_id}"
+                callback = self.parse_v2
 
             headers = {
                 "User-Agent": random.choice(self.USER_AGENTS),
@@ -68,7 +76,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
             yield scrapy.Request(
                 url,
                 headers=headers,
-                callback=self.parse,
+                callback=callback,
                 errback=self.handle_error,
                 meta={
                     'product_id': product_id,
@@ -79,18 +87,18 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
             )
             count += 1
             self.logger.info(f"Processing product {count}: {product_id} - {product_name}")
+            time.sleep(random.uniform(1, 3))  # random delay between 1-3 seconds
 
         if count == 0:
             self.logger.info("No products found for processing.")
 
-    def parse(self, response):
+    def parse_v1(self, response):
         product_id = response.meta['product_id']
         product_name = response.meta['product_name']
         try:
             data = json.loads(response.text)
             product = data.get("product", {})
             upcs = product.get("upcs", [])
-            # Collect all upc_ingredients from all UPCs
             all_upc_ingredients = []
             for upc in upcs:
                 upc_ingredients = upc.get("upc_ingredients", [])
@@ -98,7 +106,6 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
 
             self.logger.info(f"Parsing response for product_id={product_id}, status={response.status}")
             self.logger.debug(f"Response body: {response.text[:500]}")
-            
 
             doc = {
                 "product_id": product_id,
@@ -111,12 +118,46 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
                 {"$set": doc},
                 upsert=True
             )
-            self.source_collection.update_one({"id": product_id}, {"$set": {"status": "success"}})
-            self.logger.info(f"✅ {product_id}: {len(all_upc_ingredients)} upc_ingredients saved. Response status = {response.status}")
+            if len(all_upc_ingredients) == 0:
+                self.logger.warning(f"⚠️ No ingredients found for product {product_id}.")
+            else:
+                self.source_collection.update_one({"id": product_id}, {"$set": {"status": "success"}})
+                self.logger.info(f"✅ {product_id}: {len(all_upc_ingredients)} upc_ingredients saved. Response status = {response.status}")
         except Exception as e:
             self.logger.error(f"❌ Error parsing product {product_id}: {e}")
             self.source_collection.update_one({"id": product_id}, {"$set": {"status": "failed"}})
 
+    def parse_v2(self, response):
+        product_id = response.meta['product_id']
+        product_name = response.meta['product_name']
+        try:
+            data = json.loads(response.text)
+            product = data.get("product", {})
+            ingredients = product.get("ingredients", [])
+
+            self.logger.info(f"Parsing response for product_id={product_id}, status={response.status}")
+            self.logger.debug(f"Response body: {response.text[:500]}")
+
+            doc = {
+                "product_id": product_id,
+                "product_name": product_name,
+                "ingredients": ingredients
+            }
+
+            self.ingredient_collection.update_one(
+                {"product_id": product_id},
+                {"$set": doc},
+                upsert=True
+            )
+            if len(ingredients) == 0:
+                self.logger.warning(f"⚠️ No ingredients found for product {product_id}.")
+            else:
+                self.source_collection.update_one({"id": product_id}, {"$set": {"status": "success"}})
+                self.logger.info(f"✅ {product_id}: {len(ingredients)} ingredients saved. Response status = {response.status}")
+        except Exception as e:
+            self.logger.error(f"❌ Error parsing product {product_id}: {e}")
+            self.source_collection.update_one({"id": product_id}, {"$set": {"status": "failed"}})
+            
     def handle_error(self, failure):
         product_id = failure.request.meta['product_id']
         self.logger.error(f"❌ Request failed for {product_id}: {failure.request.url}")

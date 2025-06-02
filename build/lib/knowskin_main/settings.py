@@ -12,12 +12,36 @@ BOT_NAME = "knowskin_main"
 SPIDER_MODULES = ["knowskin_main.spiders"]
 NEWSPIDER_MODULE = "knowskin_main.spiders"
 
+SCRAPEOPS_API_KEY = '64cc759c-ab65-4161-acdf-92e9632075bb'
+SCRAPERAPI_API_KEY = '0d7326ad99726d3a7c6cd1a0c0c2c22b'
+
+# EXTENSIONS = {
+#         'scrapeops_scrapy.extension.ScrapeOpsMonitor': 500, 
+#         }
+
+# DOWNLOADER_MIDDLEWARES = {
+#         'scrapeops_scrapy.middleware.retry.RetryMiddleware': 550,
+#         'scrapy.downloadermiddlewares.retry.RetryMiddleware': None,
+#         }
+
+AUTOTHROTTLE_ENABLED = True
+AUTOTHROTTLE_START_DELAY = 3
+AUTOTHROTTLE_MAX_DELAY = 10
+AUTOTHROTTLE_TARGET_CONCURRENCY = 1.0
+
+CONCURRENT_REQUESTS = 2  # Global
+CONCURRENT_REQUESTS_PER_DOMAIN = 1
+
+
+
+
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 #USER_AGENT = "knowskin_main (+http://www.yourdomain.com)"
 
 # Obey robots.txt rules
-ROBOTSTXT_OBEY = True
+ROBOTSTXT_OBEY = False
+LOG_STDOUT = False
 
 # Configure maximum concurrent requests performed by Scrapy (default: 16)
 #CONCURRENT_REQUESTS = 32

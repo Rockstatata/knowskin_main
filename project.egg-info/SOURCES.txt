@@ -3,6 +3,8 @@ knowskin_main/__init__.py
 knowskin_main/items.py
 knowskin_main/middlewares.py
 knowskin_main/pipelines.py
+knowskin_main/run_batches.py
+knowskin_main/schedule_batches.py
 knowskin_main/settings.py
 knowskin_main/spiders/__init__.py
 knowskin_main/spiders/thinkdirtyspider.py
