@@ -35,7 +35,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
         self.local_db = self.local_client["Knowskin_demo"]
         self.ingredient_collection = self.local_db["ingredients"]
 
-        self.batch_size = 10  # Adjust per needs
+        self.batch_size = 20  # Adjust per needs
         self.skip = int(kwargs.get("skip", 0))
 
     def start_requests(self):
@@ -44,7 +44,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
             {"_id": 0, "id": 1, "name": 1}
         ).skip(self.skip).limit(self.batch_size)
 
-        proxy = "http://tnxpbndi-rotate:0sc4oasvwyqs@p.webshare.io:80/"
+        #proxy = "http://tnxpbndi-rotate:0sc4oasvwyqs@p.webshare.io:80/"
 
         count = 0
         for product in products:
@@ -73,7 +73,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
                 meta={
                     'product_id': product_id,
                     'product_name': product_name,
-                    'proxy': proxy,
+                    #'proxy': proxy,
                     'download_timeout': 10
                 }
             )
