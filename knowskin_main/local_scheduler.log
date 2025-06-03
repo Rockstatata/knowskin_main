@@ -4,3 +4,10 @@
 2025-06-03 07:38:01,606 [INFO] Batch skip=5 completed successfully.
 2025-06-03 07:38:11,606 [INFO] Starting batch with skip=10 (Attempt 1)
 2025-06-03 07:39:07,220 [INFO] Batch skip=10 completed successfully.
+2025-06-03 07:39:17,221 [INFO] Starting batch with skip=15 (Attempt 1)
+2025-06-03 07:40:35,912 [INFO] Batch skip=15 completed successfully.
+2025-06-03 07:40:45,913 [INFO] Starting batch with skip=20 (Attempt 1)
+2025-06-03 07:41:15,381 [INFO] Batch skip=20 completed successfully.
+2025-06-03 07:41:25,382 [INFO] Starting batch with skip=25 (Attempt 1)
+2025-06-03 07:41:44,444 [INFO] Batch skip=25 completed successfully.
+2025-06-03 07:41:54,444 [INFO] Starting batch with skip=30 (Attempt 1)
