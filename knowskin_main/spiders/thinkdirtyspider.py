@@ -1,25 +1,29 @@
-import time
+import os
 import scrapy
 import pymongo
 import json
 import random
-import logging
-import random
-import time
+from dotenv import load_dotenv
+
+load_dotenv()
 
 class ThinkdirtyspiderSpider(scrapy.Spider):
     name = "thinkdirtyspider"
     allowed_domains = ["app.thinkdirtyapp.com"]
 
-    # Rotating headers
+    # Expanded rotating headers
     USER_AGENTS = [
         "okhttp/5.0.0-alpha.2",
         "okhttp/4.9.3",
+        "Mozilla/5.0 (Linux; Android 10; SM-G975F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.93 Mobile Safari/537.36",
+        "Dalvik/2.1.0 (Linux; U; Android 10; SM-G975F Build/QP1A.190711.020)",
     ]
     X_DEVICE_UUIDS = [
         "dBEFxpVWQgykqOwx3PhEiz",
-         "a1b2c3d4e5f6g7h8i9j0k",
-         "ZxCvBnMqWeRtYuIoPlKjH"
+        "a1b2c3d4e5f6g7h8i9j0k",
+        "ZxCvBnMqWeRtYuIoPlKjH",
+        "uuid-1234567890abcdef",
+        "uuid-abcdef1234567890",
     ]
     X_AUTH_TOKENS = [
         "mzHe5b16qKxRX_xoLEAi",
@@ -28,26 +32,31 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.client = pymongo.MongoClient(
-            "mongodb+srv://algoadmin:0IHi82N9Hoi84yQp@knowskin-cluster.ogv7tvs.mongodb.net/?retryWrites=true&w=majority&appName=knowskin-cluster"
-        )
+        mongo_uri = os.getenv("MONGO_URI")
+        self.logger.info(f"Connecting to MongoDB at {mongo_uri}")
+        local_mongo_uri = os.getenv("LOCAL_MONGO_URI")
+        self.logger.info(f"Connecting to Local MongoDB at {local_mongo_uri}")
+        self.client = pymongo.MongoClient(mongo_uri)
         self.db = self.client["knowskin"]
         self.source_collection = self.db["products"]
 
-        self.local_client = pymongo.MongoClient("mongodb://localhost:27017/")
+        self.local_client = pymongo.MongoClient(local_mongo_uri)
         self.local_db = self.local_client["Knowskin_demo"]
         self.ingredient_collection = self.local_db["ingredients"]
 
-        self.batch_size = 20  # Adjust per needs
+        self.batch_size = 5  # Adjust per needs
         self.skip = int(kwargs.get("skip", 0))
 
     def start_requests(self):
+        """
+        Only fetch products that are not fetched or failed previously.
+        """
         products = self.source_collection.find(
             {"$or": [{"status": {"$exists": False}}, {"status": "pending"}, {"status": "failed"}]},
             {"_id": 0, "id": 1, "name": 1}
         ).skip(self.skip).limit(self.batch_size)
 
-        proxy = "http://ernusbhx-rotate:xkj6r6ecaqlz@p.webshare.io:80"
+        proxy = os.getenv("SCRAPY_PROXY")
 
         count = 0
         for product in products:
@@ -83,11 +92,11 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
                     'product_name': product_name,
                     'proxy': proxy,
                     'download_timeout': 10
-                }
+                },
+                dont_filter=True
             )
             count += 1
             self.logger.info(f"Processing product {count}: {product_id} - {product_name}")
-            time.sleep(random.uniform(1, 3))  # random delay between 1-3 seconds
 
         if count == 0:
             self.logger.info("No products found for processing.")
@@ -120,6 +129,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
             )
             if len(all_upc_ingredients) == 0:
                 self.logger.warning(f"⚠️ No ingredients found for product {product_id}.")
+                self.source_collection.update_one({"id": product_id}, {"$set": {"status": "failed"}})
             else:
                 self.source_collection.update_one({"id": product_id}, {"$set": {"status": "success"}})
                 self.logger.info(f"✅ {product_id}: {len(all_upc_ingredients)} upc_ingredients saved. Response status = {response.status}")
@@ -151,14 +161,15 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
             )
             if len(ingredients) == 0:
                 self.logger.warning(f"⚠️ No ingredients found for product {product_id}.")
+                self.source_collection.update_one({"id": product_id}, {"$set": {"status": "failed"}})
             else:
                 self.source_collection.update_one({"id": product_id}, {"$set": {"status": "success"}})
                 self.logger.info(f"✅ {product_id}: {len(ingredients)} ingredients saved. Response status = {response.status}")
         except Exception as e:
             self.logger.error(f"❌ Error parsing product {product_id}: {e}")
             self.source_collection.update_one({"id": product_id}, {"$set": {"status": "failed"}})
-            
+
     def handle_error(self, failure):
-        product_id = failure.request.meta['product_id']
+        product_id = failure.request.meta.get('product_id', 'unknown')
         self.logger.error(f"❌ Request failed for {product_id}: {failure.request.url}")
         self.source_collection.update_one({"id": product_id}, {"$set": {"status": "failed"}})

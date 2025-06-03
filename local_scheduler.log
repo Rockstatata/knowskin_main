@@ -1,0 +1,13 @@
+2025-06-03 07:30:01,105 [INFO] Starting batch with skip=0 (Attempt 1)
+2025-06-03 07:30:02,485 [WARNING] Error on skip=0, attempt 1: Command '['scrapy', 'crawl', 'thinkdirtyspider', '-a', 'skip=0']' returned non-zero exit status 1.
+2025-06-03 07:30:07,486 [INFO] Starting batch with skip=0 (Attempt 2)
+2025-06-03 07:30:08,583 [WARNING] Error on skip=0, attempt 2: Command '['scrapy', 'crawl', 'thinkdirtyspider', '-a', 'skip=0']' returned non-zero exit status 1.
+2025-06-03 07:30:13,584 [INFO] Starting batch with skip=0 (Attempt 3)
+2025-06-03 07:30:14,688 [WARNING] Error on skip=0, attempt 3: Command '['scrapy', 'crawl', 'thinkdirtyspider', '-a', 'skip=0']' returned non-zero exit status 1.
+2025-06-03 07:30:19,689 [ERROR] Batch skip=0 failed after 3 attempts.
+2025-06-03 07:30:19,690 [INFO] Starting batch with skip=20 (Attempt 1)
+2025-06-03 07:30:20,832 [WARNING] Error on skip=20, attempt 1: Command '['scrapy', 'crawl', 'thinkdirtyspider', '-a', 'skip=20']' returned non-zero exit status 1.
+2025-06-03 07:31:35,625 [INFO] Starting batch with skip=0 (Attempt 1)
+2025-06-03 07:32:40,175 [INFO] Batch skip=0 completed successfully.
+2025-06-03 07:32:50,176 [INFO] Starting batch with skip=20 (Attempt 1)
+2025-06-03 07:34:33,551 [INFO] Batch skip=20 completed successfully.
