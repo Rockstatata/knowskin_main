@@ -44,7 +44,7 @@ def run_batches_task(total_products: int, batch_size: int, delay_between_jobs: i
 @app.post("/run_batches/")
 def run_batches(
     background_tasks: BackgroundTasks,
-    total_products: int = 200000,
+    total_products: int = 80000,
     batch_size: int = 5,
     delay_between_jobs: int = 10
 ):

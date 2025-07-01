@@ -4,7 +4,7 @@ import logging
 import subprocess
 
 # === CONFIGURATION ===
-TOTAL_PRODUCTS = 200000
+TOTAL_PRODUCTS = 80000
 BATCH_SIZE = 5
 DELAY_BETWEEN_JOBS = 10  # seconds between runs to avoid rate limiting
 MAX_RETRIES = 3

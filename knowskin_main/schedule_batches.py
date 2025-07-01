@@ -7,7 +7,7 @@ SCRAPYD_URL = "http://localhost:6800"
 PROJECT = "knowskin_main"
 SPIDER = "thinkdirtyspider"
 
-TOTAL_PRODUCTS = 200000
+TOTAL_PRODUCTS = 80000
 BATCH_SIZE = 5
 POLL_INTERVAL = 5  # seconds to wait before checking again
 MAX_RETRIES = 3
