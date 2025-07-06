@@ -56,7 +56,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
             {"_id": 0, "id": 1, "name": 1}
         ).skip(self.skip).limit(self.batch_size)
 
-        proxy = os.getenv("SCRAPY_PROXY")
+        #proxy = os.getenv("SCRAPY_PROXY")
 
         count = 0
         for product in products:
@@ -90,7 +90,7 @@ class ThinkdirtyspiderSpider(scrapy.Spider):
                 meta={
                     'product_id': product_id,
                     'product_name': product_name,
-                    'proxy': proxy,
+                    #'proxy': proxy,
                     'download_timeout': 10
                 },
                 dont_filter=True
